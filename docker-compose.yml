@@ -43,6 +43,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
     volumes:
       - taiga-db-data:/var/lib/postgresql/data
     networks:
@@ -53,6 +54,7 @@ services:
     environment:
       <<: *default-back-environment
       ENABLE_SLACK: "true"
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
     volumes: *default-back-volumes
     networks:
       - taiga
@@ -65,6 +67,7 @@ services:
     image: taigaio/taiga-back:latest
     entrypoint: ["/taiga-back/docker/async_entrypoint.sh"]
     environment: *default-back-environment
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
     volumes: *default-back-volumes
     networks:
       - taiga
@@ -80,6 +83,7 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
       RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST}
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
     volumes:
       - taiga-async-rabbitmq-data:/var/lib/rabbitmq
     networks:
@@ -92,6 +96,7 @@ services:
       TAIGA_WEBSOCKETS_URL: "${TAIGA_WEBSOCKETS_URL}"
       TAIGA_SUBPATH: "${TAIGA_SUBPATH}" # "" or "/subpath"
       ENABLE_SLACK: "true"
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
     networks:
       - taiga
     # volumes:
@@ -103,6 +108,7 @@ services:
       RABBITMQ_USER: ${RABBITMQ_USER}
       RABBITMQ_PASS: ${RABBITMQ_PASS}
       TAIGA_SECRET_KEY: "${TAIGA_SECRET_KEY}"
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
     networks:
       - taiga
     depends_on:
@@ -115,6 +121,7 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
       RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST}
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
     volumes:
       - taiga-events-rabbitmq-data:/var/lib/rabbitmq
     networks:
@@ -125,11 +132,13 @@ services:
     environment:
       MAX_AGE: 360
       SECRET_KEY: "${TAIGA_SECRET_KEY}"
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
     networks:
       - taiga
 
   taiga-gateway:
     image: nginx:1.19-alpine
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
     volumes:
       - ./taiga-gateway/taiga.conf:/etc/nginx/conf.d/default.conf
       - taiga-static-data:/taiga/static
