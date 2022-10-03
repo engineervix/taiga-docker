@@ -166,4 +166,4 @@ networks:
   taiga:
   backend:
     external: true
-    name: http_backend
+    name: nginx-proxy_and_companion_nginx-proxy_backend
