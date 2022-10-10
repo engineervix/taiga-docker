@@ -392,3 +392,8 @@ Map a Python configuration file to `/taiga-back/settings/config.py`. You can use
 ### taiga-front
 
 Map a `conf.json`configuration file to `/usr/share/nginx/html/conf.json`. You can use [this file](https://raw.githubusercontent.com/kaleidos-ventures/taiga-front/main/docker/conf.json.template) as an example.
+
+## Extras
+
+- Backup Docker volumes using [offen/docker-volume-backup](https://github.com/offen/docker-volume-backup)
+- Postgres backup based on [dokku/dokku-postgres approach](https://github.com/dokku/dokku-postgres/blob/1.24.0/functions#L119)
