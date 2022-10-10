@@ -41,12 +41,11 @@ services:
     image: postgres:12.3
     labels:
       - docker-volume-backup.stop-during-backup=taiga-db
-      - docker-volume-backup.archive-pre=/bin/sh -c 'wget ${HEALTHCHECKS_PING_URL} -O /dev/null && pg_dump -Fc --no-acl --no-owner -U ${POSTGRES_USER} -w ${POSTGRES_DB} > /tmp/dumps/taiga-db_backup_$$(date "+%Y%m%d_%H%M%S").out'
+      - docker-volume-backup.archive-pre=/bin/sh -c 'pg_dump -Fc --no-acl --no-owner -U ${POSTGRES_USER} -w ${POSTGRES_DB} > /tmp/dumps/taiga-db_backup_$$(date "+%Y%m%d_%H%M%S").out'
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      HEALTHCHECKS_PING_URL: ${HEALTHCHECKS_PING_URL}
     restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
     volumes:
       - taiga-db-data:/var/lib/postgresql/data
@@ -169,6 +168,8 @@ services:
   backup_db: &backup_service
     image: offen/docker-volume-backup:v2.21.0
     restart: always
+    labels:
+      - docker-volume-backup.archive-pre=/bin/sh -c 'wget ${HEALTHCHECKS_PING_URL} -O /dev/null'
     environment: &backup_environment
       BACKUP_CRON_EXPRESSION: ${BACKUP_CRON_EXPRESSION}
       BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS}
@@ -181,6 +182,7 @@ services:
       AWS_ENDPOINT: ${AWS_ENDPOINT}
       AWS_S3_PATH: ${AWS_S3_PATH}
       LOCAL_BACKUP_LOCATION: ${LOCAL_BACKUP_LOCATION}
+      HEALTHCHECKS_PING_URL: ${HEALTHCHECKS_PING_URL}
       BACKUP_STOP_CONTAINER_LABEL: taiga-db
       BACKUP_FILENAME: taiga-db-backup-%Y-%m-%dT%H-%M-%S.tar.gz
       BACKUP_LATEST_SYMLINK: taiga-db-backup-latest.tar.gz
